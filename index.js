@@ -2,7 +2,7 @@ window.addEventListener("load", main);
 window.addEventListener("resize", resizeFields);
 
 let fieldValues = [];
-let currentPlayer = 1;
+let currentPlayer;
 
 
 function main() {
@@ -29,6 +29,7 @@ function startGame() {
     const BUTTON = document.getElementById("start-BTN");
     const GAME_FOOTER = document.getElementById("gameFooter");
     
+    currentPlayer = 1;
     GAME_LAYOUT.innerHTML = "";
     generateFields(GAME_LAYOUT);
 
