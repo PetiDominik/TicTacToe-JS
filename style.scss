@@ -1,0 +1,115 @@
+$colorMain: #8D7B68;
+$colorSecond: #A4907C;
+$colorThird: #C8B6A6;
+$colorFourth: #F1DEC9;
+
+* {
+    box-sizing: border-box;
+    color: $colorFourth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #8D7B68;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    #gameContainer {
+        width: 40vw;
+        min-height: 40vw;
+        background-color: $colorSecond;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+
+        #gameHeader, #gameFooter {
+            width: 100%;
+            color: $colorFourth;
+            font-size: 35px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #gameHeader {
+            border-bottom: 5px solid $colorMain;
+        }
+        #gameFooter {
+            border-top: 5px solid $colorMain;
+        }
+
+        #game {
+            width: 100%;
+            min-height: 40vw;
+            padding: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+
+            #start-BTN {
+                padding: 10px;
+                font-size: 25px;
+                background-color: $colorMain;
+                border: 5px solid $colorMain;
+                border-radius: 10px;
+                transition: 0.5s;
+                color: $colorFourth;
+                cursor: pointer;
+    
+                &:hover, &:active {
+                    background-color: transparent;
+                }
+            }
+
+            #winAlert {
+                width: 300px;
+                height: 200px;
+                background-color: $colorSecond;
+                border: 10px solid $colorMain;
+                border-radius: 20px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                font-size: 25px;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                top: calc(50% - 150px);
+                left: calc(50% - 150px);
+            }
+
+            .field {
+                border: 2px solid $colorMain;
+                background-size: cover;
+                background-position: center;
+            }
+        }
+
+    }
+}
+
+
+@media only screen and (max-width: 340px) {
+    body {
+        article {
+            display: none;
+        }
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    body {
+        article {
+            #gameContainer {
+                width: 100vw;
+                min-height: 100vw;
+            }
+        }
+    }
+}
