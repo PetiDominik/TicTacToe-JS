@@ -94,7 +94,7 @@ function fieldClick() {
         showWinAlert(GAME_LAYOUT, currentPlayer);
         return;
     }
-    if (hasEmptyField()) {
+    if (!hasEmptyField()) {
         showWinAlert(GAME_LAYOUT);
         return;
     }
@@ -141,15 +141,19 @@ function showWinAlert(GAME_LAYOUT, player = -1){
 }
 
 function hasEmptyField() {
-    let i, j = 0;
-    while(i < fieldValues.length && fieldValues[i][j] != "") {
+    let i = 0, j = 0;
+    let van = false;
+
+    while(i < fieldValues.length && !van) {
+        j = 0;
+
         while(j < fieldValues[i].length && fieldValues[i][j] != "") {
             j++;
         }
-        j = 0;
+        van = j < fieldValues[i].length;
         i++;
     }
-    return i < fieldValues.length;
+    return i <= fieldValues.length && j < fieldValues[i-1].length;
 }
 
 function checkWinner() {
