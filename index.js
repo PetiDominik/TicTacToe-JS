@@ -89,8 +89,11 @@ function fieldClick() {
     //console.log(fieldValues);
     refreshFields();
     let hasWinner = checkWinner();
-
     if (hasWinner) {
+        showWinAlert(GAME_LAYOUT, currentPlayer);
+        return;
+    }
+    if (hasEmptyField()) {
         showWinAlert(GAME_LAYOUT);
         return;
     }
@@ -117,7 +120,7 @@ function refreshFields() {
 
 }
 
-function showWinAlert(GAME_LAYOUT){
+function showWinAlert(GAME_LAYOUT, player = -1){
     {/* <div id="winAlert">
         Játékos 1 nyert
         <button id="start-BTN">Újrakezdés</button>
@@ -126,7 +129,7 @@ function showWinAlert(GAME_LAYOUT){
     const BUTTON = document.createElement("button");
 
     WIN_BOX.id = "winAlert";
-    WIN_BOX.innerHTML += `Játékos ${currentPlayer} nyert!`
+    WIN_BOX.innerHTML += player != -1 ? `Játékos ${player} nyert!` : "Döntetlen!";
 
     BUTTON.innerHTML = "Újrakezdés";
     BUTTON.id = "start-BTN";
@@ -134,6 +137,18 @@ function showWinAlert(GAME_LAYOUT){
 
     WIN_BOX.appendChild(BUTTON);
     GAME_LAYOUT.appendChild(WIN_BOX);
+}
+
+function hasEmptyField() {
+    let i, j = 0;
+    while(i < fieldValues.length && fieldValues[i][j] != "") {
+        while(j < fieldValues[i].length && fieldValues[i][j] != "") {
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+    return i < fieldValues.length;
 }
 
 function checkWinner() {
