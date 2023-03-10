@@ -19,7 +19,7 @@ body {
 
     #gameContainer {
         width: 500px;
-        min-height: 500px;
+        //min-height: 500px;
         background-color: $colorSecond;
         display: flex;
         flex-wrap: wrap;
@@ -59,7 +59,7 @@ body {
 
         #game {
             width: 100%;
-            min-height: 40vw;
+            min-height: 200px;
             padding: 5px;
             display: flex;
             flex-wrap: wrap;

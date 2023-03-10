@@ -4,6 +4,7 @@ window.addEventListener("resize", resizeFields);
 let fieldValues = [];
 let currentPlayer;
 let gameSize = 3;
+let winCount = 3;
 
 
 function main() {
@@ -25,10 +26,12 @@ function initGame() {
     BUTTON.addEventListener("click", startGame);
     BUTTON_3X3.addEventListener("click", function(){
         gameSize = 3;
+        winCount = 3;
         startGame();
     });
     BUTTON_5X5.addEventListener("click", function(){
         gameSize = 5;
+        winCount = 4;
         startGame();
     });
 
@@ -37,13 +40,11 @@ function initGame() {
 
 function startGame() {
     const GAME_LAYOUT = document.getElementById("game");
-    const BUTTON = document.getElementById("start-BTN");
     const GAME_FOOTER = document.getElementById("gameFooter");
     
     currentPlayer = 1;
     GAME_LAYOUT.innerHTML = "";
     generateFields(GAME_LAYOUT);
-
 
     GAME_FOOTER.innerHTML = "Játékos 1";
 }
@@ -51,14 +52,19 @@ function startGame() {
 
 function generateFields(GAME_LAYOUT) {
     fieldValues = [];
+
     for (let i = 0; i < gameSize; i++) {
         fieldValues[i] = [];
+
         for (let j = 0; j < gameSize; j++) {
             const FIELD = document.createElement("div");
+            
             FIELD.id = `${i}-${j}`;
             FIELD.classList.add("field");
             FIELD.addEventListener("click", fieldClick);
+            
             GAME_LAYOUT.appendChild(FIELD);
+            
             fieldValues[i][j] = "";
         }
     }
@@ -66,7 +72,8 @@ function generateFields(GAME_LAYOUT) {
 }
 
 function resizeFields() {
-    if (window.innerWidth <= 340) {return false;}
+    if (window.innerWidth <= 500) {return false;}
+
     const GAME_LAYOUT = document.getElementById("game");
     const FIELDS = document.getElementsByClassName("field");
     
@@ -77,12 +84,11 @@ function resizeFields() {
     let gameBoxWidth = getComputedStyle(GAME_LAYOUT).width;
     gameBoxWidth = parseFloat(gameBoxWidth.split("px")[0]);
     let fieldWidth = gameBoxWidth / gameSize - (4 * 2) - (2 * 4 / gameSize);
-    //console.log(fieldWidth);
 
     for (let i = 0; i < FIELDS.length; i++) {
         let field = FIELDS[i];
+
         field.style.width = `${fieldWidth}px`; 
-        //console.log(field.style.width);
         field.style.height = field.style.width;
     }
 
@@ -96,8 +102,7 @@ function fieldClick() {
     if (fieldValues[i][j] != "") {return false;}
     
     fieldValues[i][j] = currentPlayer == 1 ? "x" : "o";
-    
-    //console.log(fieldValues);
+
     refreshFields();
     if (checkWinner()) {return false;}
 
@@ -117,17 +122,12 @@ function refreshFields() {
             FIELD.style.background = `url("imgs/${FIELDS_IMAGE}.png")`;
             FIELD.style.backgroundSize = "cover";
             FIELD.style.backgroundPosition = "center";
-            //console.log(FIELD.style.background);
         }
     }
 
 }
 
 function showWinAlert(GAME_LAYOUT, player = -1){
-    {/* <div id="winAlert">
-        Játékos 1 nyert
-        <button id="start-BTN">Újrakezdés</button>
-    </div> */}
     const WIN_BOX = document.createElement("div");
     const BUTTON = document.createElement("button");
 
@@ -152,6 +152,7 @@ function hasEmptyField() {
         while (j < fieldValues[i].length && fieldValues[i][j] != "") {
             j++;
         }
+
         van = j < fieldValues[i].length;
         i++;
     }
@@ -160,7 +161,7 @@ function hasEmptyField() {
 
 function checkWinner() {
     const GAME_LAYOUT = document.getElementById("game");
-    let hasWinner = has3InRow() || has3InColumn() || has3InX() || has3InXReverse();
+    let hasWinner = has3InRow() || has3InColumn() || has3InX();
 
     if (hasWinner) {
         showWinAlert(GAME_LAYOUT, currentPlayer);
@@ -175,23 +176,22 @@ function checkWinner() {
 
 function has3InRow() {
     let has3 = false;
-    let nextEachOther = 0;
     let i = 0, j = 0, k = 0;
 
     while (i < fieldValues.length && !has3) {
         j = 0;
         
-        while ((j < fieldValues.length) && (!has3)) {
+        while ((j < fieldValues[i].length) && (!has3)) {
             let firstColumn = fieldValues[i][j];
-            nextEachOther = 0;
             k = 0;
-
-            while ((j + k < fieldValues[i].length) && (nextEachOther <= 3) && (firstColumn != "")) {
-                nextEachOther += (firstColumn == fieldValues[i][j + k]) ? 1 : 0;
-                k++;
+            
+            if (firstColumn != "") {
+                while ((j + k < fieldValues[i].length) && (k < winCount) && (firstColumn == fieldValues[i][j + k])) {
+                    k++;
+                }
             }
             j++;
-            has3 = nextEachOther == 3;
+            has3 = (k == winCount);
         }
         i++;
     }
@@ -202,22 +202,21 @@ function has3InRow() {
 function has3InColumn() {
     let has3 = false;
     let i = 0, j = 0, k = 0;
-    let nextEachOther = 0;
 
     while (i < fieldValues.length && !has3) {
         j = 0;
+        
         while ((j < fieldValues[i].length) && (!has3)) {
             let firstRow = fieldValues[i][j];
-            nextEachOther = 0;
             k = 0;
 
-            while ((i + k < fieldValues.length) && (nextEachOther <= 3) && (firstRow != "")) {
-                nextEachOther += (firstRow == fieldValues[i+k][j]) ? 1 : 0;
-                k++;
+            if (firstRow != "") {
+                while ((i + k < fieldValues.length) && (k <= winCount) && (firstRow == fieldValues[i+k][j])) {
+                    k++;
+                }
             }
             j++;
-            //console.log(nextEachOther);
-            has3 = nextEachOther == 3;
+            has3 = (k == winCount);
         }
         i++;
     }
@@ -231,47 +230,28 @@ function has3InX() {
 
     while (i < fieldValues.length && !has3) {
         j = 0;
+
         while ((j < fieldValues.length) && !has3) {
-            let nextEachOther = 0;
             let firstField = fieldValues[i][j];
             k = 0;
-            
-            while ((i+k < fieldValues.length) && (j+k < fieldValues[i].length) && (nextEachOther <= 3) && (firstField != "")){
 
-                nextEachOther += (firstField == fieldValues[i+k][j+k]) ? 1 : 0;
-                k++;
+            if (firstField != "") {
+                while ((i+k < fieldValues.length) && (j+k < fieldValues[i].length) && (k <= winCount) && (firstField == fieldValues[i+k][j+k])){
+                    k++;
+                }
+                has3 = k == winCount;
+
+                if (!has3) {
+                    while ((!has3) && (i-k >= 0) && (j+k < fieldValues[i].length) && (k <= winCount) && (firstField == fieldValues[i-k][j+k])){
+                        k++;
+                    }
+                    has3 = k == winCount;
+                }
             }
             j++;
-            has3 = nextEachOther == 3;
         }
         i++;
     }
 
     return has3;
 }
-
-function has3InXReverse() {
-    let has3 = false;
-    let i = 0, j = 0, k = 0;
-
-    while (i < fieldValues.length && !has3) {
-        j = 0;
-        while ((j < fieldValues.length) && !has3) {
-            let nextEachOther = 0;
-            let firstField = fieldValues[i][j];
-            k = 0;
-            
-            while ((i-k >= 0) && (j+k < fieldValues[i].length) && (nextEachOther <= 3) && (firstField != "")){
-
-                nextEachOther += (firstField == fieldValues[i-k][j+k]) ? 1 : 0;
-                k++;
-            }
-            j++;
-            has3 = nextEachOther == 3;
-        }
-        i++;
-    }
-
-    return has3;
-}
-
