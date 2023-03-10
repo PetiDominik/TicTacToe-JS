@@ -14,16 +14,31 @@ body {
     background-color: #8D7B68;
     height: 100vh;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
 
     #gameContainer {
-        width: 40vw;
-        min-height: 40vw;
+        width: 500px;
+        min-height: 500px;
         background-color: $colorSecond;
         display: flex;
         flex-wrap: wrap;
         flex-direction: row;
+
+        button{
+            padding: 10px;
+            font-size: 25px;
+            background-color: $colorMain;
+            border: 5px solid $colorMain;
+            border-radius: 10px;
+            transition: 0.5s;
+            color: $colorFourth;
+            cursor: pointer;
+
+            &:hover, &:active {
+                background-color: transparent;
+            }
+        }
 
         #gameHeader, #gameFooter {
             width: 100%;
@@ -36,6 +51,7 @@ body {
         }
         #gameHeader {
             border-bottom: 5px solid $colorMain;
+            justify-content: space-around;
         }
         #gameFooter {
             border-top: 5px solid $colorMain;
@@ -51,20 +67,7 @@ body {
             justify-content: center;
             gap: 4px;
 
-            #start-BTN {
-                padding: 10px;
-                font-size: 25px;
-                background-color: $colorMain;
-                border: 5px solid $colorMain;
-                border-radius: 10px;
-                transition: 0.5s;
-                color: $colorFourth;
-                cursor: pointer;
-    
-                &:hover, &:active {
-                    background-color: transparent;
-                }
-            }
+            
 
             #winAlert {
                 width: 300px;
@@ -95,7 +98,7 @@ body {
 }
 
 
-@media only screen and (max-width: 340px) {
+@media only screen and (max-width: 500px) {
     body {
         article {
             display: none;
@@ -103,7 +106,7 @@ body {
     }
 }
 
-@media only screen and (max-width: 600px) {
+/* @media only screen and (max-width: 500px) {
     body {
         article {
             #gameContainer {
@@ -112,4 +115,4 @@ body {
             }
         }
     }
-}
+} */

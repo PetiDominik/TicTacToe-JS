@@ -9,16 +9,29 @@ body {
   background-color: #8D7B68;
   height: 100vh;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   justify-content: center;
 }
 body #gameContainer {
-  width: 40vw;
-  min-height: 40vw;
+  width: 500px;
+  min-height: 500px;
   background-color: #A4907C;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+}
+body #gameContainer button {
+  padding: 10px;
+  font-size: 25px;
+  background-color: #8D7B68;
+  border: 5px solid #8D7B68;
+  border-radius: 10px;
+  transition: 0.5s;
+  color: #F1DEC9;
+  cursor: pointer;
+}
+body #gameContainer button:hover, body #gameContainer button:active {
+  background-color: transparent;
 }
 body #gameContainer #gameHeader, body #gameContainer #gameFooter {
   width: 100%;
@@ -31,6 +44,7 @@ body #gameContainer #gameHeader, body #gameContainer #gameFooter {
 }
 body #gameContainer #gameHeader {
   border-bottom: 5px solid #8D7B68;
+  justify-content: space-around;
 }
 body #gameContainer #gameFooter {
   border-top: 5px solid #8D7B68;
@@ -44,19 +58,6 @@ body #gameContainer #game {
   align-items: center;
   justify-content: center;
   gap: 4px;
-}
-body #gameContainer #game #start-BTN {
-  padding: 10px;
-  font-size: 25px;
-  background-color: #8D7B68;
-  border: 5px solid #8D7B68;
-  border-radius: 10px;
-  transition: 0.5s;
-  color: #F1DEC9;
-  cursor: pointer;
-}
-body #gameContainer #game #start-BTN:hover, body #gameContainer #game #start-BTN:active {
-  background-color: transparent;
 }
 body #gameContainer #game #winAlert {
   width: 300px;
@@ -81,14 +82,18 @@ body #gameContainer #game .field {
   background-position: center;
 }
 
-@media only screen and (max-width: 340px) {
+@media only screen and (max-width: 500px) {
   body article {
     display: none;
   }
 }
-@media only screen and (max-width: 600px) {
-  body article #gameContainer {
-    width: 100vw;
-    min-height: 100vw;
-  }
-}/*# sourceMappingURL=style.css.map */
+/* @media only screen and (max-width: 500px) {
+    body {
+        article {
+            #gameContainer {
+                width: 100vw;
+                min-height: 100vw;
+            }
+        }
+    }
+} *//*# sourceMappingURL=style.css.map */

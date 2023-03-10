@@ -3,6 +3,7 @@ window.addEventListener("resize", resizeFields);
 
 let fieldValues = [];
 let currentPlayer;
+let gameSize = 3;
 
 
 function main() {
@@ -15,11 +16,21 @@ function main() {
 function initGame() {
     const GAME_LAYOUT = document.getElementById("game");
     const BUTTON = document.createElement("button");
+    const BUTTON_3X3 = document.getElementById("3xGame");
+    const BUTTON_5X5 = document.getElementById("5xGame");
     
     BUTTON.innerHTML += "Indítás";
     BUTTON.id = "start-BTN";
 
     BUTTON.addEventListener("click", startGame);
+    BUTTON_3X3.addEventListener("click", function(){
+        gameSize = 3;
+        startGame();
+    });
+    BUTTON_5X5.addEventListener("click", function(){
+        gameSize = 5;
+        startGame();
+    });
 
     GAME_LAYOUT.appendChild(BUTTON);
 }
@@ -40,9 +51,9 @@ function startGame() {
 
 function generateFields(GAME_LAYOUT) {
     fieldValues = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < gameSize; i++) {
         fieldValues[i] = [];
-        for (let j = 0; j < 3; j++) {
+        for (let j = 0; j < gameSize; j++) {
             const FIELD = document.createElement("div");
             FIELD.id = `${i}-${j}`;
             FIELD.classList.add("field");
@@ -65,7 +76,7 @@ function resizeFields() {
 
     let gameBoxWidth = getComputedStyle(GAME_LAYOUT).width;
     gameBoxWidth = parseFloat(gameBoxWidth.split("px")[0]);
-    let fieldWidth = gameBoxWidth / 3 - (4 * 2) - (2 * 4 / 3);
+    let fieldWidth = gameBoxWidth / gameSize - (4 * 2) - (2 * 4 / gameSize);
     //console.log(fieldWidth);
 
     for (let i = 0; i < FIELDS.length; i++) {
@@ -78,7 +89,6 @@ function resizeFields() {
 }
 
 function fieldClick() {
-    const GAME_LAYOUT = document.getElementById("game");
     const GAME_FOOTER = document.getElementById("gameFooter");
     let id = this.id.split("-");
     let i = parseInt(id[0]), j = parseInt(id[1]);
@@ -89,15 +99,7 @@ function fieldClick() {
     
     //console.log(fieldValues);
     refreshFields();
-    let hasWinner = checkWinner();
-    if (hasWinner) {
-        showWinAlert(GAME_LAYOUT, currentPlayer);
-        return;
-    }
-    if (!hasEmptyField()) {
-        showWinAlert(GAME_LAYOUT);
-        return;
-    }
+    if (checkWinner()) {return false;}
 
     currentPlayer = currentPlayer == 1 ? 2 : 1;
     GAME_FOOTER.innerHTML = `Játékos ${currentPlayer}`;
@@ -144,10 +146,10 @@ function hasEmptyField() {
     let i = 0, j = 0;
     let van = false;
 
-    while(i < fieldValues.length && !van) {
+    while (i < fieldValues.length && !van) {
         j = 0;
 
-        while(j < fieldValues[i].length && fieldValues[i][j] != "") {
+        while (j < fieldValues[i].length && fieldValues[i][j] != "") {
             j++;
         }
         van = j < fieldValues[i].length;
@@ -157,23 +159,40 @@ function hasEmptyField() {
 }
 
 function checkWinner() {
-    return has3InRow() || has3InColumn() || has3InX();
+    const GAME_LAYOUT = document.getElementById("game");
+    let hasWinner = has3InRow() || has3InColumn() || has3InX() || has3InXReverse();
+
+    if (hasWinner) {
+        showWinAlert(GAME_LAYOUT, currentPlayer);
+        return true;
+    }
+    if (!hasEmptyField()) {
+        showWinAlert(GAME_LAYOUT);
+        return true;
+    }
+    return false;
 }
 
 function has3InRow() {
     let has3 = false;
-    let i = 0, j = 0;
+    let nextEachOther = 0;
+    let i = 0, j = 0, k = 0;
 
-    while(i < fieldValues.length && !has3) {
-        let nextEachOther = 0;
+    while (i < fieldValues.length && !has3) {
         j = 0;
-        let firstColumn = fieldValues[i][j];
+        
+        while ((j < fieldValues.length) && (!has3)) {
+            let firstColumn = fieldValues[i][j];
+            nextEachOther = 0;
+            k = 0;
 
-        while((j < fieldValues[i].length) && (nextEachOther == j) && (nextEachOther <= 3)) {
-            nextEachOther += (firstColumn != "" && firstColumn == fieldValues[i][j]) ? 1 : 0;
+            while ((j + k < fieldValues[i].length) && (nextEachOther <= 3) && (firstColumn != "")) {
+                nextEachOther += (firstColumn == fieldValues[i][j + k]) ? 1 : 0;
+                k++;
+            }
             j++;
+            has3 = nextEachOther == 3;
         }
-        has3 = nextEachOther == 3;
         i++;
     }
 
@@ -182,19 +201,25 @@ function has3InRow() {
 
 function has3InColumn() {
     let has3 = false;
-    let i = 0, j = 0;
+    let i = 0, j = 0, k = 0;
+    let nextEachOther = 0;
 
-    while(i < fieldValues[j].length && !has3) {
-        let nextEachOther = 0;
-        let firstRow = fieldValues[j][i];
-
-        while((j < fieldValues.length) && (nextEachOther == j) && (nextEachOther <= 3)) {
-            nextEachOther += (firstRow != "" && firstRow == fieldValues[j][i]) ? 1 : 0;
-            j++;
-        }
-        has3 = nextEachOther == 3;
-        i++;
+    while (i < fieldValues.length && !has3) {
         j = 0;
+        while ((j < fieldValues[i].length) && (!has3)) {
+            let firstRow = fieldValues[i][j];
+            nextEachOther = 0;
+            k = 0;
+
+            while ((i + k < fieldValues.length) && (nextEachOther <= 3) && (firstRow != "")) {
+                nextEachOther += (firstRow == fieldValues[i+k][j]) ? 1 : 0;
+                k++;
+            }
+            j++;
+            //console.log(nextEachOther);
+            has3 = nextEachOther == 3;
+        }
+        i++;
     }
 
     return has3;
@@ -202,19 +227,51 @@ function has3InColumn() {
 
 function has3InX() {
     let has3 = false;
-    let i = 0, j = 0;
+    let i = 0, j = 0, k = 0;
+
     while (i < fieldValues.length && !has3) {
-        let nextEachOther = 0;
-        let firstField = fieldValues[0][0];
         j = 0;
-        while((j < fieldValues.length) && (nextEachOther == j) && (nextEachOther <= 3)) {
-            //if (j >= fieldValues.length || j >= fieldValues[j].length) {continue;}
-            nextEachOther += (firstField != "" && firstField == fieldValues[j][j]) ? 1 : 0;
+        while ((j < fieldValues.length) && !has3) {
+            let nextEachOther = 0;
+            let firstField = fieldValues[i][j];
+            k = 0;
+            
+            while ((i+k < fieldValues.length) && (j+k < fieldValues[i].length) && (nextEachOther <= 3) && (firstField != "")){
+
+                nextEachOther += (firstField == fieldValues[i+k][j+k]) ? 1 : 0;
+                k++;
+            }
             j++;
+            has3 = nextEachOther == 3;
         }
         i++;
-        has3 = nextEachOther == 3;
     }
 
     return has3;
 }
+
+function has3InXReverse() {
+    let has3 = false;
+    let i = 0, j = 0, k = 0;
+
+    while (i < fieldValues.length && !has3) {
+        j = 0;
+        while ((j < fieldValues.length) && !has3) {
+            let nextEachOther = 0;
+            let firstField = fieldValues[i][j];
+            k = 0;
+            
+            while ((i-k >= 0) && (j+k < fieldValues[i].length) && (nextEachOther <= 3) && (firstField != "")){
+
+                nextEachOther += (firstField == fieldValues[i-k][j+k]) ? 1 : 0;
+                k++;
+            }
+            j++;
+            has3 = nextEachOther == 3;
+        }
+        i++;
+    }
+
+    return has3;
+}
+
